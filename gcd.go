@@ -17,7 +17,7 @@ func main() {
 	if len(os.Args) > 2 {
 		debug = (os.Args[2] == "--debug" || os.Args[2] == "-d")
 	}
-	abs := path.Join(os.Getenv("HOME"), "src", "go", "src")
+	abs := path.Join(os.Getenv("GOPATH"), "src")
 	if name != "" {
 		match := &FileMatch{name: name, path: abs}
 		filepath.Walk(abs, match.Find)
