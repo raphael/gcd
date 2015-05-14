@@ -33,12 +33,15 @@ type FileMatch struct {
 
 func (f *FileMatch) Find(path string, info os.FileInfo, err error) error {
 	fname := info.Name()
+	if fname == "_workspace" || fname == ".git" || fname == ".hg" || fname == ".bundle" {
+		return filepath.SkipDir
+	}
+	if !info.IsDir() {
+		return nil
+	}
 	if fname == f.name {
 		f.path = path
 		return fmt.Errorf("done")
-	}
-	if fname == "_workspace" || fname == ".git" || fname == ".hg" || fname == ".bundle" {
-		return filepath.SkipDir
 	}
 	if debug {
 		fmt.Println(path + "/" + info.Name())
