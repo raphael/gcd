@@ -20,7 +20,10 @@ func main() {
 	abs := path.Join(os.Getenv("GOPATH"), "src")
 	if name != "" {
 		match := &FileMatch{name: name, path: abs}
-		filepath.Walk(abs, match.Find)
+		err := filepath.Walk(abs, match.Find)
+		if err != nil && err.Error() != "done" {
+			fmt.Fprintf(os.Stderr, "** %s", err)
+		}
 		abs = match.path
 	}
 	fmt.Println(abs)
@@ -32,6 +35,9 @@ type FileMatch struct {
 }
 
 func (f *FileMatch) Find(path string, info os.FileInfo, err error) error {
+	if err != nil {
+		return err
+	}
 	fname := info.Name()
 	if fname == "_workspace" || fname == ".git" || fname == ".hg" || fname == ".bundle" {
 		return filepath.SkipDir
