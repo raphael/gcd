@@ -39,7 +39,7 @@ func (f *FileMatch) Find(path string, info os.FileInfo, err error) error {
 		return err
 	}
 	fname := info.Name()
-	if fname == "_workspace" || fname == ".git" || fname == ".hg" || fname == ".bundle" {
+	if fname == "vendor" || fname == "_workspace" || fname == ".git" || fname == ".hg" || fname == ".bundle" {
 		return filepath.SkipDir
 	}
 	m := info.Mode()
