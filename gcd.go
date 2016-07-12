@@ -20,6 +20,9 @@ func main() {
 	abs := path.Join(os.Getenv("GOPATH"), "src")
 	if name != "" {
 		match := &FileMatch{name: name, path: abs}
+		if f, err := filepath.Abs("."); err != nil {
+			match.skip = f
+		}
 		err := filepath.Walk(abs, match.Find)
 		if err != nil && err.Error() != "done" {
 			fmt.Fprintf(os.Stderr, "** %s", err)
@@ -32,6 +35,7 @@ func main() {
 type FileMatch struct {
 	name string
 	path string
+	skip string
 }
 
 func (f *FileMatch) Find(path string, info os.FileInfo, err error) error {
@@ -46,7 +50,7 @@ func (f *FileMatch) Find(path string, info os.FileInfo, err error) error {
 	if !m.IsDir() && m&os.ModeSymlink == 0 {
 		return nil
 	}
-	if fname == f.name {
+	if fname == f.name && fname != f.skip {
 		f.path = path
 		return fmt.Errorf("done")
 	}
