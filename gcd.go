@@ -20,7 +20,8 @@ func main() {
 	abs := path.Join(os.Getenv("GOPATH"), "src")
 	if name != "" {
 		match := &FileMatch{name: name, path: abs}
-		if f, err := filepath.Abs("."); err != nil {
+		cwd, _ := os.Getwd()
+		if f, err := filepath.Abs(cwd); err == nil {
 			match.skip = f
 		}
 		err := filepath.Walk(abs, match.Find)
@@ -50,7 +51,7 @@ func (f *FileMatch) Find(path string, info os.FileInfo, err error) error {
 	if !m.IsDir() && m&os.ModeSymlink == 0 {
 		return nil
 	}
-	if fname == f.name && fname != f.skip {
+	if fname == f.name && path != f.skip {
 		f.path = path
 		return fmt.Errorf("done")
 	}
